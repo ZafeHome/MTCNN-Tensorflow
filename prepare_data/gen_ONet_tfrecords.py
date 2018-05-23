@@ -34,7 +34,7 @@ def _get_output_filename(output_dir, name, net):
     return '%s/landmark_landmark.tfrecord' % (output_dir)
     
 
-def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False):
+def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False, item_name=''):
     """Runs the conversion operation.
 
     Args:
@@ -48,7 +48,7 @@ def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False):
         print('Dataset files already exist. Exiting without re-creating them.')
         return
     # GET Dataset, and shuffling.
-    dataset = get_dataset(dataset_dir, net=net)
+    dataset = get_dataset(dataset_dir, net=net, item_name=item_name)
     # filenames = dataset['filename']
     if shuffling:
         tf_filename = tf_filename + '_shuffle'
@@ -56,7 +56,6 @@ def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False):
         random.shuffle(dataset)
     # Process dataset files.
     # write the data to tfrecord
-    print 'lala'
     with tf.python_io.TFRecordWriter(tf_filename) as tfrecord_writer:
         for i, image_example in enumerate(dataset):
             sys.stdout.write('\r>> Converting image %d/%d' % (i + 1, len(dataset)))
@@ -70,10 +69,14 @@ def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False):
     print('\nFinished converting the MTCNN dataset!')
 
 
-def get_dataset(dir, net='PNet'):
+def get_dataset(dir, net='PNet', item_name=''):
     #item = 'imglists/PNet/train_%s_raw.txt' % net
     #item = 'imglists/PNet/train_%s_landmark.txt' % net
-    item = '%s/landmark_%s_aug.txt' % (net,net)
+    
+    assert(item_name != '')
+
+    item = '%s/%s_%s_aug.txt' % (net, item_name, net)
+
     print item 
     dataset_dir = os.path.join(dir, item)
     imagelist = open(dataset_dir, 'r')
@@ -126,4 +129,7 @@ if __name__ == '__main__':
     dir = '.' 
     net = '48'
     output_directory = 'imglists/ONet'
-    run(dir, net, output_directory, shuffling=True)
+    run(dir, net, output_directory, shuffling=True, item_name='landmark')
+    run(dir, net, output_directory, shuffling=True, item_name='part')
+    run(dir, net, output_directory, shuffling=True, item_name='pos')
+    run(dir, net, output_directory, shuffling=True, item_name='neg')
