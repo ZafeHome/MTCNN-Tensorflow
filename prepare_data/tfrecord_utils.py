@@ -177,11 +177,12 @@ def _process_image(filename, coder):
     return image_data, height, width
 def _process_image_withoutcoder(filename):
     image = cv2.imread(filename)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)[:,:,0]
     image_data = image.tostring()
-    assert len(image.shape) == 3
+    assert len(image.shape) == 2
     height = image.shape[0]
     width = image.shape[1]
-    assert image.shape[2] == 3
+    # assert image.shape[2] == 3
     return image_data, height, width
 
 

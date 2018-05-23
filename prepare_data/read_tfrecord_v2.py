@@ -29,7 +29,7 @@ def read_single_tfrecord(tfrecord_file, batch_size, net):
     else:
         image_size = 48
     image = tf.decode_raw(image_features['image/encoded'], tf.uint8)
-    image = tf.reshape(image, [image_size, image_size, 3])
+    image = tf.reshape(image, [image_size, image_size, 1])
     image = (tf.cast(image, tf.float32)-127.5) / 128
     
     # image = tf.image.per_image_standardization(image)

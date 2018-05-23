@@ -138,7 +138,7 @@ def train(net_factory, prefix, end_epoch, base_dir,
         image_size = 48
     
     #define placeholder
-    input_image = tf.placeholder(tf.float32, shape=[config.BATCH_SIZE, image_size, image_size, 3], name='input_image')
+    input_image = tf.placeholder(tf.float32, shape=[config.BATCH_SIZE, image_size, image_size, 1], name='input_image')
     label = tf.placeholder(tf.float32, shape=[config.BATCH_SIZE], name='label')
     bbox_target = tf.placeholder(tf.float32, shape=[config.BATCH_SIZE, 4], name='bbox_target')
     landmark_target = tf.placeholder(tf.float32,shape=[config.BATCH_SIZE,10],name='landmark_target')
