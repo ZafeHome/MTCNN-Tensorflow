@@ -76,7 +76,7 @@ def get_dataset(dir, net='PNet', item_name=''):
     
     assert(item_name != '')
 
-    item = '%s/%s_%s_aug.txt' % (net, item_name, net)
+    item = '%s/%s_%s.txt' % (net, item_name, net)
 
     print item 
     dataset_dir = os.path.join(dir, item)

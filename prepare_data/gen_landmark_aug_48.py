@@ -55,7 +55,7 @@ def GenerateData(ftxt, output,net,argument=False):
         print 'Net type error'
         return
     image_id = 0
-    f = open(join(OUTPUT,"landmark_%s_aug.txt" %(size)),'w')
+    f = open(join(OUTPUT,"landmark_%s.txt" %(size)),'w')
     data = getDataFromTxt(ftxt)
     idx = 0
     #image_path bbox landmark(5*2)
