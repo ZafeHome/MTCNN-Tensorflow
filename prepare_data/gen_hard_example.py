@@ -129,6 +129,7 @@ def t_net(prefix, epoch,
     detectors = [None, None, None]
     print("Test model: ", test_mode)
     #PNet-echo
+    print(prefix, epoch)
     model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
     print(model_path[0])
     # load pnet model
@@ -141,6 +142,7 @@ def t_net(prefix, epoch,
     # load rnet model
     if test_mode in ["RNet", "ONet"]:
         print("==================================", test_mode)
+        print(batch_size, model_path)
         RNet = Detector(R_Net, 24, batch_size[1], model_path[1])
         detectors[1] = RNet
 
@@ -216,7 +218,7 @@ if __name__ == '__main__':
     if args.test_mode == 'PNet':
         net = 'RNet'
         image_size = 24
-    elif args.test_mode == 'RNet'
+    elif args.test_mode == 'RNet':
         image_size = 48
         net = 'ONet'
 

@@ -39,7 +39,8 @@ class Detector(object):
         n = databatch.shape[0]
         while cur < n:
             #split mini-batch
-            minibatch.append(databatch[cur:min(cur + batch_size, n), :, :, :])
+            minibatch.append(np.expand_dims(databatch[cur:min(cur + batch_size, n), :, :], axis=3))
+            
             cur += batch_size
         #every batch prediction result
         cls_prob_list = []
