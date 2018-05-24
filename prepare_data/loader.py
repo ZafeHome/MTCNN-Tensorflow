@@ -68,6 +68,7 @@ class TestLoader:
         #print len(imdb)
         #assert len(imdb) == 1, "Single batch only"
         im = cv2.imread(imdb)
+        im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)[:,:,0]
         self.data = im
 
 class ImageLoader:

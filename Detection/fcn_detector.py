@@ -36,7 +36,7 @@ class FcnDetector(object):
             print "restore models' param"
             saver.restore(self.sess, model_path)
     def predict(self, databatch):
-        height, width, _ = databatch.shape
+        height, width = databatch.shape
         # print(height, width)
         cls_prob, bbox_pred = self.sess.run([self.cls_prob, self.bbox_pred],
                                                            feed_dict={self.image_op: databatch, self.width_op: width,

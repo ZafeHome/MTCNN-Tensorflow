@@ -116,7 +116,7 @@ class MtcnnDetector(object):
         return boundingbox.T
     #pre-process images
     def processed_image(self, img, scale):
-        height, width, channels = img.shape
+        height, width = img.shape
         new_height = int(height * scale)  # resized new height
         new_width = int(width * scale)  # resized new width
         new_dim = (new_width, new_height)
@@ -192,13 +192,13 @@ class MtcnnDetector(object):
         boxes_c: numpy array
             boxes after calibration
         """
-        h, w, c = im.shape
+        h, w = im.shape
         net_size = 12
         
         current_scale = float(net_size) / self.min_face_size  # find initial scale
         # print("current_scale", net_size, self.min_face_size, current_scale)
         im_resized = self.processed_image(im, current_scale)
-        current_height, current_width, _ = im_resized.shape
+        current_height, current_width = im_resized.shape
         # fcn
         all_boxes = list()
         while min(current_height, current_width) > net_size:
@@ -211,7 +211,7 @@ class MtcnnDetector(object):
 
             current_scale *= self.scale_factor
             im_resized = self.processed_image(im, current_scale)
-            current_height, current_width, _ = im_resized.shape
+            current_height, current_width = im_resized.shape
 
             if boxes.size == 0:
                 continue
@@ -258,7 +258,7 @@ class MtcnnDetector(object):
         boxes_c: numpy array
             boxes after calibration
         """
-        h, w, c = im.shape
+        h, w = im.shape
         dets = self.convert_to_square(dets)
         dets[:, 0:4] = np.round(dets[:, 0:4])
 
@@ -305,7 +305,7 @@ class MtcnnDetector(object):
         boxes_c: numpy array
             boxes after calibration
         """
-        h, w, c = im.shape
+        h, w = im.shape
         dets = self.convert_to_square(dets)
         dets[:, 0:4] = np.round(dets[:, 0:4])
         [dy, edy, dx, edx, y, ey, x, ex, tmpw, tmph] = self.pad(dets, w, h)
