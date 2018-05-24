@@ -27,11 +27,11 @@ def _add_to_tfrecord(filename, image_example, tfrecord_writer):
     tfrecord_writer.write(example.SerializeToString())
 
 
-def _get_output_filename(output_dir, name, net):
+def _get_output_filename(output_dir, name, net, item_name=''):
     #st = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     #return '%s/%s_%s_%s.tfrecord' % (output_dir, name, net, st)
     #return '%s/train_PNet_landmark.tfrecord' % (output_dir)
-    return '%s/landmark_landmark.tfrecord' % (output_dir)
+    return '%s/%s_landmark.tfrecord' % (output_dir, item_name)
     
 
 def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False, item_name=''):
@@ -43,7 +43,7 @@ def run(dataset_dir, net, output_dir, name='MTCNN', shuffling=False, item_name='
     """
     
     #tfrecord name 
-    tf_filename = _get_output_filename(output_dir, name, net)
+    tf_filename = _get_output_filename(output_dir, name, net, item_name)
     if tf.gfile.Exists(tf_filename):
         print('Dataset files already exist. Exiting without re-creating them.')
         return

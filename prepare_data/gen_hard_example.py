@@ -212,11 +212,13 @@ def parse_args():
 
 if __name__ == '__main__':
 
-    net = 'ONet'
-    if net == "RNet":
+    args = parse_args()
+    if args.test_mode == 'PNet':
+        net = 'RNet'
         image_size = 24
-    if net == "ONet":
+    elif args.test_mode == 'RNet'
         image_size = 48
+        net = 'ONet'
 
     base_dir = '../prepare_data/WIDER_train'
     data_dir = '%s' % str(image_size)
@@ -229,7 +231,6 @@ if __name__ == '__main__':
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-    args = parse_args()
 
     print 'Called with argument:'
     print args 
