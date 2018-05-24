@@ -3,6 +3,11 @@
 .vscode
 .DS_Store
 
+*.index
+*.meta
+*.data-*-of-*
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
