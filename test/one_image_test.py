@@ -17,7 +17,7 @@ slide_window = False
 shuffle = False
 detectors = [None, None, None]
 prefix = ['../data/MTCNN_model/PNet_landmark/PNet', '../data/MTCNN_model/RNet_landmark/RNet', '../data/MTCNN_model/ONet_landmark/ONet']
-epoch = [18, 14, 16]
+epoch = [10, 10, 10]
 batch_size = [2048, 256, 16]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 # load pnet model
@@ -49,21 +49,23 @@ for item in os.listdir(path):
     gt_imdb.append(os.path.join(path,item))
 test_data = TestLoader(gt_imdb)
 all_boxes,landmarks = mtcnn_detector.detect_face(test_data)
+print(all_boxes)
 count = 0
 for imagepath in gt_imdb:
     print imagepath
-    image = cv2.imread(imagepath)
+    image_rgb = cv2.imread(imagepath)
+    image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2YUV)[:,:,0]
     for bbox in all_boxes[count]:
-        cv2.putText(image,str(np.round(bbox[4],2)),(int(bbox[0]),int(bbox[1])),cv2.FONT_HERSHEY_TRIPLEX,1,color=(255,0,255))
-        cv2.rectangle(image, (int(bbox[0]),int(bbox[1])),(int(bbox[2]),int(bbox[3])),(0,0,255))
+        cv2.putText(image_rgb,str(np.round(bbox[4],2)),(int(bbox[0]),int(bbox[1])),cv2.FONT_HERSHEY_TRIPLEX,1,color=(255,0,255))
+        cv2.rectangle(image_rgb, (int(bbox[0]),int(bbox[1])),(int(bbox[2]),int(bbox[3])),(0,0,255))
         
     for landmark in landmarks[count]:
         for i in range(len(landmark)/2):
-            cv2.circle(image, (int(landmark[2*i]),int(int(landmark[2*i+1]))), 3, (0,0,255))
+            cv2.circle(image_rgb, (int(landmark[2*i]),int(int(landmark[2*i+1]))), 3, (0,0,255))
         
     count = count + 1
     #cv2.imwrite("result_landmark/%d.png" %(count),image)
-    cv2.imshow("lala",image)
+    cv2.imshow("lala",image_rgb)
     cv2.waitKey(0)    
 
 '''

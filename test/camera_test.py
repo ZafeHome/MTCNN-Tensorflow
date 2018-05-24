@@ -9,15 +9,15 @@ import cv2
 import numpy as np
 
 test_mode = "onet"
-thresh = [0.9, 0.6, 0.7]
-min_face_size = 24
+thresh = [0.6, 0.7, 0.7]
+min_face_size = int(sys.argv[2])
 stride = 2
 slide_window = False
 shuffle = False
 #vis = True
 detectors = [None, None, None]
 prefix = ['../data/MTCNN_model/PNet_landmark/PNet', '../data/MTCNN_model/RNet_landmark/RNet', '../data/MTCNN_model/ONet_landmark/ONet']
-epoch = [18, 14, 16]
+epoch = [10, 10, 10]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 PNet = FcnDetector(P_Net, model_path[0])
 detectors[0] = PNet
@@ -25,8 +25,9 @@ RNet = Detector(R_Net, 24, 1, model_path[1])
 detectors[1] = RNet
 ONet = Detector(O_Net, 48, 1, model_path[2])
 detectors[2] = ONet
-videopath = "./video_test.avi"
-mtcnn_detector = MtcnnDetector(detectors=detectors, min_face_size=min_face_size,
+videopath = sys.argv[1]
+scale_factor = 0.5
+mtcnn_detector = MtcnnDetector(detectors=detectors, min_face_size=min_face_size,scale_factor =scale_factor,
                                stride=stride, threshold=thresh, slide_window=slide_window)
 
 video_capture = cv2.VideoCapture(videopath)
@@ -38,7 +39,8 @@ while True:
     t1 = cv2.getTickCount()
     ret, frame = video_capture.read()
     if ret:
-        image = np.array(frame)
+        image_rgb = np.array(frame)
+        image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2YUV)[:,:,0]
         boxes_c,landmarks = mtcnn_detector.detect(image)
         
         print landmarks.shape
