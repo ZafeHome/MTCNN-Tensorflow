@@ -6,7 +6,14 @@
 *.index
 *.meta
 *.data-*-of-*
-
+logs/*
+prepare_data/12/*
+prepare_data/24/*
+prepare_data/48/*
+prepare_data/WIDER_train
+prepare_data/imglists/
+prepare_data/lfw_5590/
+prepare_data/net_7876/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
