@@ -215,6 +215,7 @@ class MtcnnDetector(object):
 
             if boxes.size == 0:
                 continue
+            
             keep = py_nms(boxes[:, :5], 0.5, 'Union')
             boxes = boxes[keep]
             all_boxes.append(boxes)

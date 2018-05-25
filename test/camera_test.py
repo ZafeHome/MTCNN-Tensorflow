@@ -1,7 +1,7 @@
 #coding:utf-8
 import sys
 sys.path.append('..')
-from Detection.MtcnnDetector import MtcnnDetector
+from Detection.MtcnnDetector_time import MtcnnDetector
 from Detection.detector import Detector
 from Detection.fcn_detector import FcnDetector
 from train_models.mtcnn_model import P_Net, R_Net, O_Net
@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 
 test_mode = "onet"
-thresh = [0.6, 0.7, 0.7]
+thresh = [0.8, 0.7, 0.7]
 min_face_size = int(sys.argv[2])
 stride = 2
 slide_window = False
@@ -17,7 +17,7 @@ shuffle = False
 #vis = True
 detectors = [None, None, None]
 prefix = ['../data/MTCNN_model/PNet_landmark/PNet', '../data/MTCNN_model/RNet_landmark/RNet', '../data/MTCNN_model/ONet_landmark/ONet']
-epoch = [10, 10, 10]
+epoch = [30, 22, 22]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 PNet = FcnDetector(P_Net, model_path[0])
 detectors[0] = PNet
@@ -40,7 +40,7 @@ while True:
     ret, frame = video_capture.read()
     if ret:
         image_rgb = np.array(frame)
-        image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2YUV)[:,:,0]
+        image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2YUV)[:,:,0].copy()
         boxes_c,landmarks = mtcnn_detector.detect(image)
         
         print landmarks.shape

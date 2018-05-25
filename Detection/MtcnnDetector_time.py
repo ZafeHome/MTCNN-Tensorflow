@@ -118,7 +118,7 @@ class MtcnnDetector(object):
     def processed_image(self, img, scale):
         print(img.dtype)
         print(img.shape)
-        height, width, _ = img.shape
+        height, width = img.shape
         new_height = int(height * scale)  # resized new height
         new_width = int(width * scale)  # resized new width
         new_dim = (new_width, new_height)
