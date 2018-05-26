@@ -35,7 +35,7 @@ with open(os.path.join(dir_path, "%s" %(net),"train_%s_landmark.txt" % (net)), "
     nums = [len(neg), len(pos), len(part)]
     ratio = [3, 1, 1]
     #base_num = min(nums)
-    base_num = 250000
+    base_num = 500000
     print(len(neg), len(pos), len(part), base_num)
     if len(neg) > base_num * 3:
         neg_keep = npr.choice(len(neg), size=base_num * 3, replace=True)
