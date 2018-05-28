@@ -84,7 +84,7 @@ for annotation in annotations:
         # in case the ground truth boxes of small faces are not accurate
         if max(w, h) < 40 or x1 < 0 or y1 < 0:
             continue
-        for i in range(5):
+        for i in range(16):
             size = npr.randint(12, min(width, height) / 2)
             # delta_x and delta_y are offsets of (x1, y1)
             delta_x = npr.randint(max(-size, -x1), w)
@@ -96,7 +96,7 @@ for annotation in annotations:
             crop_box = np.array([nx1, ny1, nx1 + size, ny1 + size])
             Iou = IoU(crop_box, boxes)
     
-            cropped_im = img[ny1: ny1 + size, nx1: nx1 + size, :]
+            cropped_im = img[ny1: ny1 + size, nx1: nx1 + size, :].copy()
             resized_im = cv2.resize(cropped_im, (12, 12), interpolation=cv2.INTER_LINEAR)
     
             if np.max(Iou) < 0.3:
@@ -106,7 +106,7 @@ for annotation in annotations:
                 cv2.imwrite(save_file, resized_im)
                 n_idx += 1        
 	# generate positive examples and part faces
-        for i in range(20):
+        for i in range(50):
             # pos and part face size [minsize*0.8,maxsize*1.25]
             size = npr.randint(int(min(w, h) * 0.8), np.ceil(1.25 * max(w, h)))
 
