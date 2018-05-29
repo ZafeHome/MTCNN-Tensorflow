@@ -137,8 +137,8 @@ def P_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True)
         bbox_pred = slim.conv2d(net,num_outputs=4,kernel_size=[1,1],stride=1,scope='conv4_2',activation_fn=None)
         print bbox_pred.get_shape()
         #batch*H*W*10
-        landmark_pred = slim.conv2d(net,num_outputs=10,kernel_size=[1,1],stride=1,scope='conv4_3',activation_fn=None)
-        print landmark_pred.get_shape()
+        # landmark_pred = slim.conv2d(net,num_outputs=10,kernel_size=[1,1],stride=1,scope='conv4_3',activation_fn=None)
+        # print landmark_pred.get_shape()
         #cls_prob_original = conv4_1 
         #bbox_pred_original = bbox_pred
         if training:
@@ -149,19 +149,19 @@ def P_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True)
             bbox_pred = tf.squeeze(bbox_pred,[1,2],name='bbox_pred')
             bbox_loss = bbox_ohem(bbox_pred,bbox_target,label)
             #batch*10
-            landmark_pred = tf.squeeze(landmark_pred,[1,2],name="landmark_pred")
-            landmark_loss = landmark_ohem(landmark_pred,landmark_target,label)
+            # landmark_pred = tf.squeeze(landmark_pred,[1,2],name="landmark_pred")
+            # landmark_loss = landmark_ohem(landmark_pred,landmark_target,label)
 
             accuracy = cal_accuracy(cls_prob,label)
             L2_loss = tf.add_n(slim.losses.get_regularization_losses())
-            return cls_loss,bbox_loss,landmark_loss,L2_loss,accuracy 
+            return cls_loss,bbox_loss,None, L2_loss,accuracy 
         #test
         else:
             #when test,batch_size = 1
             cls_pro_test = tf.squeeze(conv4_1, axis=0)
             bbox_pred_test = tf.squeeze(bbox_pred,axis=0)
-            landmark_pred_test = tf.squeeze(landmark_pred,axis=0)
-            return cls_pro_test,bbox_pred_test,landmark_pred_test
+            # landmark_pred_test = tf.squeeze(landmark_pred,axis=0)
+            return cls_pro_test,bbox_pred_test, None
         
 def R_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True):
     with slim.arg_scope([slim.conv2d],
@@ -192,18 +192,18 @@ def R_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True)
         bbox_pred = slim.fully_connected(fc1,num_outputs=4,scope="bbox_fc",activation_fn=None)
         print bbox_pred.get_shape()
         #batch*10
-        landmark_pred = slim.fully_connected(fc1,num_outputs=10,scope="landmark_fc",activation_fn=None)
-        print landmark_pred.get_shape()
+        # landmark_pred = slim.fully_connected(fc1,num_outputs=10,scope="landmark_fc",activation_fn=None)
+        # print landmark_pred.get_shape()
         #train
         if training:
             cls_loss = cls_ohem(cls_prob,label)
             bbox_loss = bbox_ohem(bbox_pred,bbox_target,label)
             accuracy = cal_accuracy(cls_prob,label)
-            landmark_loss = landmark_ohem(landmark_pred,landmark_target,label)
+            # landmark_loss = landmark_ohem(landmark_pred,landmark_target,label)
             L2_loss = tf.add_n(slim.losses.get_regularization_losses())
-            return cls_loss,bbox_loss,landmark_loss,L2_loss,accuracy
+            return cls_loss,bbox_loss,None, L2_loss,accuracy
         else:
-            return cls_prob,bbox_pred,landmark_pred
+            return cls_prob,bbox_pred, None
     
 def O_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True):
     with slim.arg_scope([slim.conv2d],
@@ -254,3 +254,4 @@ def O_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True)
         
         
                                                                   
+    
