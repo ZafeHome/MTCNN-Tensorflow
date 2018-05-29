@@ -2,7 +2,7 @@
 import sys
 sys.path.append('..')
 from Detection.MtcnnDetector_time import MtcnnDetector
-from Detection.detector import Detector
+from Detection.detector_frozen import Detector
 from Detection.fcn_detector import FcnDetector
 from train_models.mtcnn_model import P_Net, R_Net, O_Net
 import cv2
@@ -21,9 +21,9 @@ epoch = [18, 22, 22]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 PNet = FcnDetector(P_Net, model_path[0])
 detectors[0] = PNet
-RNet = Detector(R_Net, 24, 1, model_path[1])
+RNet = Detector(R_Net, 24, 50, '../Detection/Rnet22_frozen_opt.pb')
 detectors[1] = RNet
-ONet = Detector(O_Net, 48, 1, model_path[2])
+ONet = Detector(O_Net, 48, 16, '../Detection/Onet22_frozen_opt.pb')
 detectors[2] = ONet
 videopath = sys.argv[1]
 scale_factor = 0.5

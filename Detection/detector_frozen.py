@@ -1,32 +1,30 @@
 import tensorflow as tf
 import numpy as np
-
+from tensorflow.python.platform import gfile
 
 
 class Detector(object):
     #net_factory:rnet or onet
     #datasize:24 or 48
-    def __init__(self, net_factory, data_size, batch_size, model_path):
+    def __init__(self, net_factory, data_size, batch_size, model_path):       
         graph = tf.Graph()
-        with graph.as_default():
-            self.image_op = tf.placeholder(tf.float32, shape=[batch_size, data_size, data_size, 1], name='input_image')
-            #figure out landmark            
-            self.cls_prob, self.bbox_pred, self.landmark_pred = net_factory(self.image_op, training=False)
+        with graph.as_default(): 
             self.sess = tf.Session(
-                config=tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True)))
-            saver = tf.train.Saver()
-            #check whether the dictionary is valid
-            model_dict = '/'.join(model_path.split('/')[:-1])
-            ckpt = tf.train.get_checkpoint_state(model_dict)
-            print model_path
-            readstate = ckpt and ckpt.model_checkpoint_path
-            assert  readstate, "the params dictionary is not valid"
-            print "restore models' param"
-            saver.restore(self.sess, model_path)       
-            #tf.train.write_graph(self.sess.graph_def, './', model_path+'graph.pbtxt')                 
+                    config=tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True)))
+            
+            # Load the model
+            with gfile.FastGFile(model_path, 'rb') as f:
+                graph_def = tf.GraphDef()
+                graph_def.ParseFromString(f.read())
+                tf.import_graph_def(graph_def, name='')
 
-        self.data_size = data_size
-        self.batch_size = batch_size
+            #self.image_op = tf.placeholder(tf.float32, shape=[batch_size, data_size, data_size, 1], name='input_image')
+            self.image_op = tf.get_default_graph().get_tensor_by_name("input_image:0")        
+            self.data_size = data_size
+            self.batch_size = batch_size
+            self.cls_prob = tf.get_default_graph().get_tensor_by_name("cls_fc/Softmax:0")
+            self.bbox_pred = tf.get_default_graph().get_tensor_by_name("bbox_fc/BiasAdd:0")
+            self.landmark_pred = tf.get_default_graph().get_tensor_by_name("landmark_fc/BiasAdd:0")
     #rnet and onet minibatch(test)
     def predict(self, databatch):
         # access data

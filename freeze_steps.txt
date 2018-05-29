@@ -1,0 +1,15 @@
+
+1) generar archivo protobuf
+    #tf.train.write_graph(self.sess.graph_def, './', model_path+'graph.pbtxt') -> agregar al constructor del detector
+
+
+2) Ver composicion de la red:
+bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/seldon/Repo/MTCNN-Tensorflow/data/MTCNN_model/ONet_landmark/ONet-22graph.pbtxt"
+
+3) identificar outputs: 'cls_fc/Softmax,bbox_fc/BiasAdd,landmark_fc/BiasAdd'
+
+4)  Freeze graph:
+
+python -m tensorflow.python.tools.freeze_graph --input_graph ../data/MTCNN_model/ONet_landmark/ONet-22graph.pbtxt --input_checkpoint ../data/MTCNN_model/ONet_landmark/ONet-22 --output_graph Onet22_frozen.pb --input_binary=False --output_node_names='cls_fc/Softmax,bbox_fc/BiasAdd,landmark_fc/BiasAdd'
+
+5) cambiar detector por detector_frozen
