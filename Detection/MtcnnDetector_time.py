@@ -302,7 +302,7 @@ class MtcnnDetector(object):
         #cls_scores : num_data*2
         #reg: num_data*4
         #landmark: num_data*10
-        cls_scores, reg = self.rnet_detector.predict(cropped_ims)
+        cls_scores, reg, _ = self.rnet_detector.predict(cropped_ims)
         cls_scores = cls_scores[:,1]
         keep_inds = np.where(cls_scores > self.thresh[1])[0]
         if len(keep_inds) > 0:
@@ -346,7 +346,7 @@ class MtcnnDetector(object):
             tmp[dy[i]:edy[i] + 1, dx[i]:edx[i] + 1] = im[y[i]:ey[i] + 1, x[i]:ex[i] + 1]
             cropped_ims[i, :, :] = (cv2.resize(tmp, (48, 48))-127.5) / 128
             
-        cls_scores, reg = self.onet_detector.predict(cropped_ims)
+        cls_scores, reg, landmark = self.onet_detector.predict(cropped_ims)
         #prob belongs to face
         cls_scores = cls_scores[:,1]        
         keep_inds = np.where(cls_scores > self.thresh[2])[0]        
@@ -355,7 +355,7 @@ class MtcnnDetector(object):
             boxes = dets[keep_inds]
             boxes[:, 4] = cls_scores[keep_inds]
             reg = reg[keep_inds]
-            #landmark = landmark[keep_inds]
+            landmark = landmark[keep_inds]
         else:
             return None, None, None
         
@@ -363,16 +363,16 @@ class MtcnnDetector(object):
         w = boxes[:,2] - boxes[:,0] + 1
         #height
         h = boxes[:,3] - boxes[:,1] + 1
-        #landmark[:,0::2] = (np.tile(w,(5,1)) * landmark[:,0::2].T + np.tile(boxes[:,0],(5,1)) - 1).T
-        #landmark[:,1::2] = (np.tile(h,(5,1)) * landmark[:,1::2].T + np.tile(boxes[:,1],(5,1)) - 1).T        
+        landmark[:,0::2] = (np.tile(w,(5,1)) * landmark[:,0::2].T + np.tile(boxes[:,0],(5,1)) - 1).T
+        landmark[:,1::2] = (np.tile(h,(5,1)) * landmark[:,1::2].T + np.tile(boxes[:,1],(5,1)) - 1).T        
         boxes_c = self.calibrate_box(boxes, reg)
         
         
         boxes = boxes[py_nms(boxes, 0.6, "Minimum")]
         keep = py_nms(boxes_c, 0.6, "Minimum")
         boxes_c = boxes_c[keep]
-        #landmark = landmark[keep]
-        return boxes, boxes_c, None
+        landmark = landmark[keep]
+        return boxes, boxes_c, landmark
     #use for video
     def detect(self, img):
         """Detect face over image

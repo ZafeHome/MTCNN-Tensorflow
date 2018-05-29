@@ -19,8 +19,8 @@ prefix = [
 epoch = [18, 22, 22]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 PNet = FcnDetector(P_Net, model_path[0])
-RNet = Detector(R_Net, 24, 50, model_path[1])
-ONet = Detector(O_Net, 48, 16, model_path[2])
+RNet = Detector(R_Net, 24, 50, model_path[1], 'RNet')
+ONet = Detector(O_Net, 48, 16, model_path[2], 'ONet')
 detectors = [PNet, RNet, ONet]
 
 mtcnn_detector = MtcnnDetector(
