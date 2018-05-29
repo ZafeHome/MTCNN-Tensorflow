@@ -21,7 +21,7 @@ def get_imdb_fddb(data_dir):
         fid = open(file_name, 'r')
         image_names = []
         for im_name in fid.readlines():
-            image_names.append(os.path.join(data_dir,im_name.strip('\n')))
+            image_names.append(im_name.strip('\n'))
         imdb.append(image_names)
     return imdb        
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     vis = False
     detectors = [None, None, None]
     prefix = ['../data/MTCNN_model/PNet_landmark/PNet', '../data/MTCNN_model/RNet_landmark/RNet', '../data/MTCNN_model/ONet_landmark/ONet']
-    epoch = [18, 14, 16]
+    epoch = [18, 22, 22]
     batch_size = [2048, 256, 16]
     model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
     # load pnet model
@@ -70,12 +70,13 @@ if __name__ == "__main__":
         dets_file_name = os.path.join(out_dir, 'FDDB-det-fold-%02d.txt' % (i + 1))
         fid = open(dets_file_name,'w')
         sys.stdout.write('%s ' % (i + 1))
-        image_names_abs = [os.path.join(data_dir,'originalPics',image_name+'.jpg') for image_name in image_names]
+        image_names_abs = [os.path.join(data_dir,image_name+'.jpg') for image_name in image_names]
+        print(image_names_abs)
         test_data = TestLoader(image_names_abs)
         all_boxes,_ = mtcnn_detector.detect_face(test_data)
         
         for idx,im_name in enumerate(image_names):
-            img_path = os.path.join(data_dir,'originalPics',im_name+'.jpg')
+            img_path = os.path.join(data_dir,im_name+'.jpg')
             image = cv2.imread(img_path)
             boxes = all_boxes[idx]
             if boxes is None:

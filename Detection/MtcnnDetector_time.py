@@ -346,7 +346,7 @@ class MtcnnDetector(object):
             tmp[dy[i]:edy[i] + 1, dx[i]:edx[i] + 1] = im[y[i]:ey[i] + 1, x[i]:ex[i] + 1]
             cropped_ims[i, :, :] = (cv2.resize(tmp, (48, 48))-127.5) / 128
             
-        cls_scores, reg,landmark = self.onet_detector.predict(cropped_ims)
+        cls_scores, reg, landmark = self.onet_detector.predict(cropped_ims)
         #prob belongs to face
         cls_scores = cls_scores[:,1]        
         keep_inds = np.where(cls_scores > self.thresh[2])[0]        
@@ -372,7 +372,7 @@ class MtcnnDetector(object):
         keep = py_nms(boxes_c, 0.6, "Minimum")
         boxes_c = boxes_c[keep]
         landmark = landmark[keep]
-        return boxes, boxes_c,landmark
+        return boxes, boxes_c, landmark
     #use for video
     def detect(self, img):
         """Detect face over image

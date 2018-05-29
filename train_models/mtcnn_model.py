@@ -249,7 +249,7 @@ def O_Net(inputs,label=None,bbox_target=None,landmark_target=None,training=True)
             L2_loss = tf.add_n(slim.losses.get_regularization_losses())
             return cls_loss,bbox_loss,landmark_loss,L2_loss,accuracy
         else:
-            return cls_prob,bbox_pred,landmark_pred
+            return cls_prob,bbox_pred, landmark_pred
             
         
         
