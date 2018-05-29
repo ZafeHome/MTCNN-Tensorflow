@@ -36,19 +36,19 @@ class ApiRequestsTest(unittest.TestCase):
     def setUp(self):
         self.speed_iterations_number = 100
 
-    def test_face_detection_success_mtcnn(self):
+    def notest_face_detection_success_mtcnn(self):
         rick_path = os.path.join(RESOURCES_DIR, 'rick.jpg')
         response = face_detect(open(rick_path, 'rb'), detector='mtcnn')
         self.assertEqual(response['status'], 200)
         self.assertEqual(len(response['data']['detections']), 6)
 
-    def test_face_detection_success_mtcnnY(self):
+    def notest_face_detection_success_mtcnnY(self):
         rick_path = os.path.join(RESOURCES_DIR, 'rickY.jpg')
         response = face_detect(open(rick_path, 'rb'), detector='mtcnnY', colorspace='gray')
         self.assertEqual(response['status'], 200)
         self.assertEqual(len(response['data']['detections']), 6)
 
-    def test_face_detection_speed_mtcnn(self):
+    def notest_face_detection_speed_mtcnn(self):
         rick_path = os.path.join(RESOURCES_DIR, 'rick.jpg')
         start = time.time()
         procs = []

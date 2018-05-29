@@ -68,8 +68,8 @@ def face_detector():
 
         colorspace = params.pop('colorspace', 'rgb')
         pix = decode_image(image, colorspace=colorspace)
-        detections, scores, landmarks = facerec.detector.face_detector(pix, **opts)
-        response = {'detections': detections, 'scores': scores, 'landmarks': landmarks}
+        detections, scores = facerec.detector.face_detector(pix, **opts)
+        response = {'detections': detections, 'scores': scores, 'landmarks': None}
 
         return json.dumps({'status': 200, 'data': response}), 200
     except:

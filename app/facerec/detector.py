@@ -53,15 +53,15 @@ def face_detector_mtcnnY(image, min_face_size=100, threshold=(0.6, 0.7, 0.7), fa
         output_faces.append(bb)
         output_scores.append(score)
 
-    for l in landmarks:
+    '''for l in landmarks:
         reye = (int(l[0]), int(l[5]))
         leye = (int(l[1]), int(l[6]))
         nose = (int(l[2]), int(l[7]))
         rmouth = (int(l[3]), int(l[8]))
         lmouth = (int(l[4]), int(l[9]))
         output_landmarks.append([reye, leye, nose, rmouth, lmouth])
-
-    return output_faces, output_scores, output_landmarks
+    '''
+    return output_faces, output_scores
 
 
 
