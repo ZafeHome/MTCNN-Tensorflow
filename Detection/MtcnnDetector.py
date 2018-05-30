@@ -2,8 +2,6 @@ import cv2
 import time
 import numpy as np
 import sys
-sys.path.append("../")
-from train_models.MTCNN_config import config
 from nms import py_nms
 
 
@@ -116,12 +114,21 @@ class MtcnnDetector(object):
         return boundingbox.T
     #pre-process images
     def processed_image(self, img, scale):
+        print(img.dtype)
+        print(img.shape)
         height, width = img.shape
         new_height = int(height * scale)  # resized new height
         new_width = int(width * scale)  # resized new width
         new_dim = (new_width, new_height)
+        print('----')
+        start = time.time()
+        print(new_dim)
         img_resized = cv2.resize(img, new_dim, interpolation=cv2.INTER_LINEAR)  # resized image
+        print(time.time() - start)
+        start = time.time()
         img_resized = (img_resized - 127.5) / 128
+        print(time.time() - start)
+        print('----')
         return img_resized
 
     def pad(self, bboxes, w, h):
@@ -192,31 +199,44 @@ class MtcnnDetector(object):
         boxes_c: numpy array
             boxes after calibration
         """
+        start = time.time()
+        net_time = 0
+        nms_time = 0
+        resize_time = 0
+        
         h, w = im.shape
         net_size = 12
         
         current_scale = float(net_size) / self.min_face_size  # find initial scale
         # print("current_scale", net_size, self.min_face_size, current_scale)
+        start_res = time.time()
         im_resized = self.processed_image(im, current_scale)
+        resize_time += time.time() - start_res
         current_height, current_width = im_resized.shape
         # fcn
         all_boxes = list()
+        
         while min(current_height, current_width) > net_size:
             #return the result predicted by pnet
             #cls_cls_map : H*w*2
             #reg: H*w*4
+            start_net = time.time()
             cls_cls_map, reg = self.pnet_detector.predict(im_resized)
+            net_time += time.time() - start_net
             #boxes: num*9(x1,y1,x2,y2,score,x1_offset,y1_offset,x2_offset,y2_offset)
             boxes = self.generate_bbox(cls_cls_map[:, :,1], reg, current_scale, self.thresh[0])
 
             current_scale *= self.scale_factor
+            start_res = time.time()
             im_resized = self.processed_image(im, current_scale)
+            resize_time += time.time() - start_res
             current_height, current_width = im_resized.shape
 
             if boxes.size == 0:
                 continue
-            
+            start_nms = time.time()
             keep = py_nms(boxes[:, :5], 0.5, 'Union')
+            nms_time += time.time() - start_nms
             boxes = boxes[keep]
             all_boxes.append(boxes)
 
@@ -226,7 +246,9 @@ class MtcnnDetector(object):
         all_boxes = np.vstack(all_boxes)
 
         # merge the detection from first stage
+        start_nms = time.time()
         keep = py_nms(all_boxes[:, 0:5], 0.7, 'Union')
+        nms_time += time.time() - start_nms        
         all_boxes = all_boxes[keep]
         boxes = all_boxes[:, :5]
 
@@ -240,6 +262,11 @@ class MtcnnDetector(object):
                              all_boxes[:, 3] + all_boxes[:, 8] * bbh,
                              all_boxes[:, 4]])
         boxes_c = boxes_c.T
+        print('Full =', time.time() - start)
+        print('Net =', net_time)
+        print('res =', resize_time)
+        print('nms =', nms_time)
+
 
         return boxes, boxes_c, None
     def detect_rnet(self, im, dets):
@@ -317,7 +344,7 @@ class MtcnnDetector(object):
             tmp[dy[i]:edy[i] + 1, dx[i]:edx[i] + 1] = im[y[i]:ey[i] + 1, x[i]:ex[i] + 1]
             cropped_ims[i, :, :] = (cv2.resize(tmp, (48, 48))-127.5) / 128
             
-        cls_scores, reg,landmark = self.onet_detector.predict(cropped_ims)
+        cls_scores, reg, landmark = self.onet_detector.predict(cropped_ims)
         #prob belongs to face
         cls_scores = cls_scores[:,1]        
         keep_inds = np.where(cls_scores > self.thresh[2])[0]        
@@ -343,7 +370,7 @@ class MtcnnDetector(object):
         keep = py_nms(boxes_c, 0.6, "Minimum")
         boxes_c = boxes_c[keep]
         landmark = landmark[keep]
-        return boxes, boxes_c,landmark
+        return boxes, boxes_c, landmark
     #use for video
     def detect(self, img):
         """Detect face over image
@@ -364,6 +391,7 @@ class MtcnnDetector(object):
         # rnet
         t2 = 0
         if self.rnet_detector:
+            print(boxes_c.shape)
             boxes, boxes_c,_ = self.detect_rnet(img, boxes_c)
             if boxes_c is None:
                 return np.array([]),np.array([])

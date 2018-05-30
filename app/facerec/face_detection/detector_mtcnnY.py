@@ -1,7 +1,12 @@
 #coding:utf-8
 import sys
-sys.path.append('/home/seldon/Repo/MTCNN-Tensorflow')
-from Detection.MtcnnDetector_time import MtcnnDetector
+import os
+
+repo_root = os.path.dirname(os.path.abspath(__file__))
+for i in range(3): repo_root = os.path.dirname(repo_root)
+sys.path.append(repo_root)
+
+from Detection.MtcnnDetector import MtcnnDetector
 from Detection.detector import Detector
 from Detection.fcn_detector import FcnDetector
 from train_models.mtcnn_model import P_Net, R_Net, O_Net
@@ -12,15 +17,15 @@ min_face_size = 100
 stride = 2
 slide_window = False
 prefix = [
-    '/home/seldon/Repo/MTCNN-Tensorflow/data/MTCNN_model/PNet_landmark/PNet', 
-    '/home/seldon/Repo/MTCNN-Tensorflow/data/MTCNN_model/RNet_landmark/RNet', 
-    '/home/seldon/Repo/MTCNN-Tensorflow/data/MTCNN_model/ONet_landmark/ONet',
+    os.path.join(repo_root, 'data/MTCNN_model/PNet_landmark/PNet'), 
+    os.path.join(repo_root, 'data/MTCNN_model/RNet_landmark/RNet'), 
+    os.path.join(repo_root, 'data/MTCNN_model/ONet_landmark/ONet'),
 ]
-epoch = [18, 22, 22]
+epoch = [30, 22, 22]
 model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
 PNet = FcnDetector(P_Net, model_path[0])
 RNet = Detector(R_Net, 24, 50, model_path[1], 'RNet')
-ONet = Detector(O_Net, 48, 16, model_path[2], 'ONet')
+ONet = Detector(O_Net, 48, 15, model_path[2], 'ONet')
 detectors = [PNet, RNet, ONet]
 
 mtcnn_detector = MtcnnDetector(

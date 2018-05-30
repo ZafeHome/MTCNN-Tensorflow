@@ -1,7 +1,7 @@
 #coding:utf-8
 import sys
 sys.path.append('..')
-from Detection.MtcnnDetector_time import MtcnnDetector
+from Detection.MtcnnDetector import MtcnnDetector
 from Detection.detector import Detector
 from Detection.fcn_detector import FcnDetector
 from train_models.mtcnn_model import P_Net, R_Net, O_Net

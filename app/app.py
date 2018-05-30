@@ -32,8 +32,6 @@ def decode_image(image, colorspace=''):
     else:
         img = cv2.imdecode(data, cv2.IMREAD_COLOR)
         pix = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    print(pix.shape)
     return pix
 
 

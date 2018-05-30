@@ -1,8 +1,6 @@
 import numpy as np
 import tensorflow as tf
 import sys
-sys.path.append("../")
-from train_models.MTCNN_config import config
 
 
 class FcnDetector(object):
