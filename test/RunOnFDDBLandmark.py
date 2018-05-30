@@ -37,24 +37,24 @@ if __name__ == "__main__":
     vis = False
     detectors = [None, None, None]
     prefix = ['../data/MTCNN_model/PNet_landmark/PNet', '../data/MTCNN_model/RNet_landmark/RNet', '../data/MTCNN_model/ONet_landmark/ONet']
-    epoch = [18, 22, 22]
+    epoch = [30, 22, 22]
     batch_size = [2048, 256, 16]
     model_path = ['%s-%s' % (x, y) for x, y in zip(prefix, epoch)]
     # load pnet model
     if slide_window:
-        PNet = Detector(P_Net, 12, batch_size[0], model_path[0])
+        PNet = Detector(P_Net, 12, batch_size[0], model_path[0], 'PNet')
     else:
         PNet = FcnDetector(P_Net, model_path[0])
     detectors[0] = PNet
     
     # load rnet model
     if test_mode in ["RNet", "ONet"]:
-        RNet = Detector(R_Net, 24, batch_size[1], model_path[1])
+        RNet = Detector(R_Net, 24, batch_size[1], model_path[1], 'RNet')
         detectors[1] = RNet
     
     # load onet model
     if test_mode == "ONet":
-        ONet = Detector(O_Net, 48, batch_size[2], model_path[2])
+        ONet = Detector(O_Net, 48, batch_size[2], model_path[2], 'ONet')
         detectors[2] = ONet
     
     mtcnn_detector = MtcnnDetector(detectors=detectors, min_face_size=min_face_size,
