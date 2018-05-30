@@ -10,7 +10,7 @@ class Detector(object):
             self.image_op = tf.placeholder(tf.float32, shape=[batch_size, data_size, data_size, 1], name='input_image')
             #figure out landmark            
             if net == 'RNet':
-                self.cls_prob, self.bbox_pred = net_factory(self.image_op, training=False)
+                self.cls_prob, self.bbox_pred, _ = net_factory(self.image_op, training=False)
             if net == 'ONet':
                 self.cls_prob, self.bbox_pred, self.landmark_pred = net_factory(self.image_op, training=False)
             self.sess = tf.Session(
